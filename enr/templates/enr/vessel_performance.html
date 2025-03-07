@@ -1,0 +1,196 @@
+{% block content %}
+<h2>Vessel Performance</h2>
+
+<!-- Filters -->
+<select id="vessel-select">
+    <option value="">Select Vessel</option>
+    {% for vessel in vessels %}
+        <option value="{{ vessel }}">{{ vessel }}</option>
+    {% endfor %}
+</select>
+
+<select id="parameter-select">
+    <option value="">Select Parameter</option>
+    {% for parameter in parameters %}
+        <option value="{{ parameter }}">{{ parameter }}</option>
+    {% endfor %}
+</select>
+
+<input type="date" id="start-date">
+<input type="date" id="end-date">
+
+<button onclick="applyFilters()">Apply Filters</button>
+<button onclick="logout()">Logout</button>
+
+<!-- Table -->
+<table border="1">
+    <thead>
+        <tr>
+            <th>Vessel</th>
+            <th>Parameter</th>
+            <th>Value</th>
+            <th>Date</th>
+        </tr>
+    </thead>
+    <tbody id="table-body"></tbody>
+</table>
+
+<!-- Pagination -->
+<button id="prev-page" onclick="changePage(-1)" disabled>Previous</button>
+<button id="next-page" onclick="changePage(1)" disabled>Next</button>
+
+<!-- Scatter Chart -->
+<canvas id="scatterChart"></canvas>
+
+<!-- Load Chart.js and Time Adapter -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+
+<!-- JavaScript Logic -->
+<script>
+let currentPage = 1;
+let nextPageUrl = null;
+let prevPageUrl = null;
+
+// Check if user is logged in
+document.addEventListener("DOMContentLoaded", function () {
+    checkAuth();
+    fetchVesselPerformance();
+});
+
+// Check authentication
+function checkAuth() {
+    const token = localStorage.getItem("access_token");
+    if (!token) {
+        alert("You need to log in first.");
+        window.location.href = "/user/login-page/";
+    }
+}
+
+// Logout function
+function logout() {
+    localStorage.removeItem("access_token");
+    window.location.href = "/user/login-page/";
+}
+
+// Fetch vessel performance data with pagination
+async function fetchVesselPerformance(url = "{% url 'vessel-performance-api' %}") {
+    const token = localStorage.getItem("access_token");
+
+    const response = await fetch(url, {
+        method: "GET",
+        headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json"
+        }
+    });
+
+    if (response.status === 401) {
+        alert("Session expired. Please log in again.");
+        logout();
+    }
+
+    const data = await response.json();
+    
+    if (response.ok) {
+        displayTable(data.results);
+        plotScatterChart(data.results);
+        handlePagination(data);
+    } else {
+        console.error("Error fetching data:", data);
+    }
+}
+
+// Display table data
+function displayTable(data) {
+    const tableBody = document.getElementById("table-body");
+    tableBody.innerHTML = "";
+
+    data.forEach(item => {
+        const row = `
+            <tr>
+                <td>${item.vessel}</td>
+                <td>${item.parameter}</td>
+                <td>${item.value}</td>
+                <td>${item.date}</td>
+            </tr>
+        `;
+        tableBody.innerHTML += row;
+    });
+}
+
+// Plot scatter chart
+let scatterChart = null;
+function plotScatterChart(data) {
+    const ctx = document.getElementById("scatterChart").getContext("2d");
+
+    const chartData = data.map(item => ({
+        x: new Date(item.date),
+        y: item.value
+    }));
+
+    if (scatterChart) {
+        scatterChart.destroy();
+    }
+
+    scatterChart = new Chart(ctx, {
+        type: "scatter",
+        data: {
+            datasets: [{
+                label: "Vessel Performance",
+                data: chartData,
+                backgroundColor: "blue"
+            }]
+        },
+        options: {
+            scales: {
+                x: {
+                    type: "time",
+                    time: { unit: "day" }
+                },
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+}
+
+// Handle pagination
+function handlePagination(data) {
+    nextPageUrl = data.next;
+    prevPageUrl = data.previous;
+
+    document.getElementById("next-page").disabled = !nextPageUrl;
+    document.getElementById("prev-page").disabled = !prevPageUrl;
+}
+
+// Change page
+function changePage(direction) {
+    let url = direction === 1 ? nextPageUrl : prevPageUrl;
+    if (url) {
+        fetchVesselPerformance(url);
+    }
+}
+
+// Apply filters
+async function applyFilters() {
+    const vessel = document.getElementById("vessel-select").value;
+    const parameter = document.getElementById("parameter-select").value;
+    const startDate = document.getElementById("start-date").value;
+    const endDate = document.getElementById("end-date").value;
+
+    let url = new URL("{% url 'vessel-performance-api' %}", window.location.origin);
+    let params = new URLSearchParams();
+
+    if (vessel) params.append("vessel", vessel);
+    if (parameter) params.append("parameter", parameter);
+    if (startDate) params.append("start_date", startDate);
+    if (endDate) params.append("end_date", endDate);
+
+    url.search = params.toString();
+
+    fetchVesselPerformance(url);
+}
+</script>
+{% endblock %}
