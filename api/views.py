@@ -51,7 +51,7 @@ class ParameterListAPIView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return ParameterList.objects.all()
+        return ParameterList.objects.all().order_by("code")
 
 # API View for listing vessels
 class VesselListAPIView(generics.ListAPIView):
@@ -59,13 +59,13 @@ class VesselListAPIView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return VesselList.objects.all()
+        return VesselList.objects.all().order_by("id") 
 
 # Base Pagination Class
 class CustomPagination(PageNumberPagination):
-    page_size = 50
+    page_size = 10
     page_size_query_param = 'page_size'
-    max_page_size = 200
+    max_page_size = 20
 
 # Common Filtering Logic
 class FilteredEnrParameterMixin:
@@ -97,7 +97,7 @@ class ENRSingleParameterAPIView(FilteredEnrParameterMixin, generics.ListAPIView)
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return self.get_filtered_queryset(EnrParameter.objects.all())
+        return self.get_filtered_queryset(EnrParameter.objects.all()).order_by("date")
 
 # Vessel Performance API View (Multiple Parameters)
 class ENRMultipleParameterAPIView(FilteredEnrParameterMixin, generics.ListAPIView):
@@ -110,12 +110,12 @@ class ENRMultipleParameterAPIView(FilteredEnrParameterMixin, generics.ListAPIVie
         selected_parameters = self.request.GET.getlist("parameters")  # Get multiple parameters
         if selected_parameters:
             queryset = queryset.filter(parameter__in=selected_parameters)  # Ensure proper filtering
-        return queryset
+        return queryset.order_by("date")
 
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()
         raw_data = list(queryset.values("vessel", "date", "movement", "displacement", "parameter", "value"))
-
+        
         # Unpivoting data
         grouped_data = defaultdict(lambda: {"parameters": {}})
         for entry in raw_data:
@@ -140,3 +140,13 @@ class ENRMultipleParameterAPIView(FilteredEnrParameterMixin, generics.ListAPIVie
             formatted_data.append(formatted_entry)
 
         return Response({"results": formatted_data})
+    
+class FilterOptionsView(APIView):
+    def get(self, request):
+        movements = EnrParameter.objects.values_list('movement', flat=True).distinct()
+        displacements = EnrParameter.objects.values_list('displacement', flat=True).distinct()
+
+        return Response({
+            "movements": list(movements),
+            "displacements": list(displacements)
+        })

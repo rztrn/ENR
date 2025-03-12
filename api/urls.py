@@ -1,7 +1,7 @@
 from django.urls import path
 from .views import (
     ProtectedView, ParameterListAPIView, VesselListAPIView,
-    ENRSingleParameterAPIView, ENRMultipleParameterAPIView
+    ENRSingleParameterAPIView, ENRMultipleParameterAPIView, FilterOptionsView
 )
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, SpectacularRedocView
@@ -19,6 +19,7 @@ urlpatterns = [
     # Parameter & Vessel Endpoints
     path('parameters/', ParameterListAPIView.as_view(), name='parameter-list'),
     path('vessels/', VesselListAPIView.as_view(), name='vessel-list'),
+    path('filters/', FilterOptionsView.as_view(), name='filters'),
 
     # Vessel Performance Endpoints
     path('performance/single/', ENRSingleParameterAPIView.as_view(), name='single-parameter'),
