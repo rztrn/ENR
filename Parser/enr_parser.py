@@ -36,21 +36,17 @@ def process_new_file(file_name):
                              var_name='Parameter', 
                              value_name='Value')
 
-        # Drop rows where Value is NaN
-        melted_df = melted_df.dropna()
+        # Convert "Value" column to numeric, setting non-numeric values to NaN
+        melted_df['Value'] = pd.to_numeric(melted_df['Value'], errors='coerce')
 
-        # Convert DataFrame to list of tuples for SQL execution
-        data_tuples = [tuple(row) for row in melted_df.itertuples(index=False, name=None)]
+        # Log rows where Value was originally a string (optional, for debugging)
+        invalid_values = melted_df[melted_df['Value'].isna()]
+        if not invalid_values.empty:
+            print(f"⚠️ Skipped {len(invalid_values)} rows due to non-numeric 'Value':")
+            print(invalid_values[['Vessel', 'Date', 'Parameter', 'Value']].head(5))  # Show first 5 invalid rows
 
-        # Define the SQL query with ON DUPLICATE KEY UPDATE
-        sql = """
-        INSERT INTO enr_enrparameter (vessel, date, movement, displacement, parameter, value)
-        VALUES (%s, %s, %s, %s, %s, %s)
-        ON DUPLICATE KEY UPDATE 
-            movement = VALUES(movement),
-            displacement = VALUES(displacement),
-            value = VALUES(value);
-        """
+        # Drop rows where Value is still NaN after conversion
+        melted_df = melted_df.dropna(subset=['Value'])
 
         # Connect to MySQL using pymysql directly
         connection = pymysql.connect(
@@ -62,9 +58,43 @@ def process_new_file(file_name):
         )
 
         with connection.cursor() as cursor:
-            cursor.executemany(sql, data_tuples)
-        
-        connection.commit()
+            for row in melted_df.itertuples(index=False):
+                vessel_id = row.Vessel  # Since Excel now sends "1" instead of "Sakti"
+                parameter = row.Parameter
+
+                # Check if Vessel ID exists in VesselList
+                cursor.execute("SELECT id FROM enr_vessellist WHERE id = %s", (vessel_id,))
+                vessel_result = cursor.fetchone()
+
+                if not vessel_result:
+                    print(f"⚠️ Skipping row because vessel_id {vessel_id} does not exist in VesselList")
+                    continue  # Skip this row
+                
+                # Fetch or insert parameter
+                cursor.execute("SELECT id FROM enr_parameterlist WHERE code = %s", (parameter,))
+                param_result = cursor.fetchone()
+
+                if not param_result:
+                    cursor.execute("INSERT INTO enr_parameterlist (code, description) VALUES (%s, %s)", 
+                                   (parameter, f"Description for {parameter}"))
+                    connection.commit()
+
+                # Get parameter ID from ParameterList
+                cursor.execute("SELECT id FROM enr_parameterlist WHERE code = %s", (parameter,))
+                parameter_id = cursor.fetchone()[0]
+
+                # Insert into EnrParameter
+                cursor.execute("""
+                INSERT INTO enr_enrparameter (vessel_id, date, movement, displacement, parameter_id, value)
+                VALUES (%s, %s, %s, %s, %s, %s)
+                ON DUPLICATE KEY UPDATE 
+                    movement = VALUES(movement),
+                    displacement = VALUES(displacement),
+                    value = VALUES(value);
+                """, (vessel_id, row.Date, row.Movement, row.Displacement, parameter_id, row.Value))
+
+            connection.commit()
+
         connection.close()
 
         print(f"✅ Successfully imported into fleetsys.enr_enrparameter: {file_name}")

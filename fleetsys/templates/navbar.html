@@ -1,0 +1,34 @@
+<nav class="bg-gray-900 text-white shadow-lg">
+    <div class="container mx-auto px-4">
+        <div class="flex justify-between items-center py-3">
+            <a href="{% url 'home' %}" class="text-xl font-semibold">Fleet Manager</a>
+
+            <!-- Mobile Menu Button -->
+            <button id="menu-btn" class="lg:hidden text-white focus:outline-none">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M4 6h16M4 12h16m-7 6h7"></path>
+                </svg>
+            </button>
+
+            <!-- Desktop Menu -->
+            <div id="menu" class="hidden lg:flex space-x-6">
+                <a href="{% url 'home' %}" class="hover:text-gray-300">Home</a>
+                <a href="{% url 'vessel-performance' %}" class="hover:text-gray-300">Vessel Performance</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="hidden lg:hidden bg-gray-800 text-white py-2 px-4">
+        <a href="{% url 'home' %}" class="block py-2">Home</a>
+        <a href="{% url 'vessel-performance' %}" class="block py-2">Vessel Performance</a>
+    </div>
+
+    <script>
+        document.getElementById("menu-btn").addEventListener("click", function () {
+            document.getElementById("mobile-menu").classList.toggle("hidden");
+        });
+    </script>
+</nav>

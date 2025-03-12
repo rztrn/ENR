@@ -1,8 +1,7 @@
-from django.urls import path
-from .views import vessel_performance_page
-from api.views import VesselPerformanceAPIView
+from django.urls import path, include
+from .views import vessel_performance, parameter_correlation_page
 
 urlpatterns = [
-    path("vessel-performance/", vessel_performance_page, name="vessel-performance"),
-    path("api/vessel-performance/", VesselPerformanceAPIView.as_view(), name="vessel-performance-api"),
+    path("vessel-performance/", vessel_performance, name="vessel-performance"),
+    path("parameter-correlation/", parameter_correlation_page, name="parameter-correlation"),
 ]

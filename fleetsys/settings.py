@@ -39,10 +39,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_extensions',
     
     # Third-party apps
     'rest_framework',
     'rest_framework_simplejwt',
+    'corsheaders',
+    'drf_spectacular',
     
     # Custom apps
     'enr',
@@ -59,6 +62,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'fleetsys.urls'
@@ -132,7 +136,13 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = 'static/'
+
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+    BASE_DIR / "fleetsys" / "static",
+]  # Where your development static files are stored
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")  # Where collectstatic will store files in production
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -145,6 +155,7 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
 SIMPLE_JWT = {
@@ -154,3 +165,7 @@ SIMPLE_JWT = {
     "BLACKLIST_AFTER_ROTATION": True,
     "AUTH_HEADER_TYPES": ("Bearer",),  # Use "Bearer <token>" in requests
 }
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",  # Add the URL of your React app
+]
