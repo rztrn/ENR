@@ -65,7 +65,7 @@ class VesselListAPIView(generics.ListAPIView):
 class CustomPagination(PageNumberPagination):
     page_size = 10
     page_size_query_param = 'page_size'
-    max_page_size = 20
+    max_page_size = 100
 
 # Common Filtering Logic
 class FilteredEnrParameterMixin:
@@ -102,25 +102,26 @@ class ENRSingleParameterAPIView(FilteredEnrParameterMixin, generics.ListAPIView)
 # Vessel Performance API View (Multiple Parameters)
 class ENRMultipleParameterAPIView(FilteredEnrParameterMixin, generics.ListAPIView):
     serializer_class = EnrParameterSerializer
-    pagination_class = CustomPagination
+    pagination_class = CustomPagination  # Enable pagination for table
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         queryset = self.get_filtered_queryset(EnrParameter.objects.all())
-        selected_parameters = self.request.GET.getlist("parameters")  # Get multiple parameters
+        selected_parameters = self.request.GET.getlist("parameters")  
         if selected_parameters:
-            queryset = queryset.filter(parameter__in=selected_parameters)  # Ensure proper filtering
+            queryset = queryset.filter(parameter__in=selected_parameters)  
         return queryset.order_by("date")
 
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()
+        full_data_requested = request.GET.get("full_data") == "true"
+
         raw_data = list(queryset.values("vessel", "date", "movement", "displacement", "parameter", "value"))
-        
+
         # Unpivoting data
         grouped_data = defaultdict(lambda: {"parameters": {}})
         for entry in raw_data:
             key = (entry["vessel"], entry["date"], entry["movement"], entry["displacement"])
-
             if key not in grouped_data:
                 grouped_data[key] = {
                     "vessel": entry["vessel"],
@@ -129,7 +130,6 @@ class ENRMultipleParameterAPIView(FilteredEnrParameterMixin, generics.ListAPIVie
                     "displacement": entry["displacement"],
                     "parameters": {}
                 }
-
             grouped_data[key]["parameters"][f"parameter_{entry['parameter']}"] = entry["value"]
 
         formatted_data = []
@@ -139,7 +139,17 @@ class ENRMultipleParameterAPIView(FilteredEnrParameterMixin, generics.ListAPIVie
             del formatted_entry["parameters"]
             formatted_data.append(formatted_entry)
 
-        return Response({"results": formatted_data})
+        if full_data_requested:
+            # Return all data (for chart) without pagination
+            return Response({"results": formatted_data})
+
+        # Apply pagination for table
+        page = self.paginate_queryset(formatted_data)
+        if page is not None:  # Ensure pagination is applied correctly
+            return self.get_paginated_response(page)
+
+        # Fallback if pagination fails (shouldn't happen)
+        return Response({"results": formatted_data})   
     
 class FilterOptionsView(APIView):
     def get(self, request):

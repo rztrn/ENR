@@ -53,9 +53,9 @@
 
     <!-- Table -->
     <div class="overflow-x-auto mt-4">
-        <table class="min-w-full border border-gray-400 shadow-md rounded-lg text-sm">
+        <table class="min-w-full border border-gray-400 shadow-md rounded-lg text-xs">
             <thead class="bg-gray-200 text-gray-700">
-                <tr id="table-head" class="border border-gray-400">
+                <tr id="table-head" class="border border-gray-400 text-xs">
                     <!-- Dynamic headers will be added here -->
                 </tr>
             </thead>
@@ -70,16 +70,17 @@
         <span id="pagination-info" class="px-2">Page 1</span>
         <button id="next-page" class="px-3 py-1 bg-gray-300 rounded disabled:opacity-50">Next</button>
     </div>
+
 </div>
 {% endblock %}
 
 {% block scripts %}
 <script>
-    let scatterChart = null;
     let fullData = []; // Store all fetched data for plotting
     let currentPage = 1;
     let pageSize = 10;
     let totalRows = 0;
+    let scatterChart = null;
     const API_BASE_URL = window.location.origin;
     // Run checkAuth() w
 
@@ -310,132 +311,113 @@ function populateDropdown(elementId, options, defaultText) {
                     .map(checkbox => checkbox.value);
     }
 
-    async function applyFilters() {
-        const vessel = document.getElementById("vessel-select").value;  // Get selected vessel
-        const movement = document.getElementById("movement-select").value;
-        const displacement = document.getElementById("displacement-select").value;
-        const parameters = getSelectedParameters();  // Get selected parameters
-        const startDate = document.getElementById("start-date").value;
-        const endDate = document.getElementById("end-date").value;
+    // Global filter state
+let filterParams = new URLSearchParams();
 
-        let url = new URL(`${API_BASE_URL}/api/performance/multiple/`);  // Correct endpoint
-        let params = new URLSearchParams();
-        
-        if (vessel) params.append("vessel", vessel);  // Add vessel to query
-        if (movement) params.append("movement", movement);  // Add vessel to query
-        if (displacement) params.append("displacement", displacement);  // Add vessel to query
-        if (startDate) params.append("start_date", startDate);
-        if (endDate) params.append("end_date", endDate);
-        parameters.forEach(param => params.append("parameters", param)); // Add multiple parameters
+async function applyFilters() {
+    filterParams = new URLSearchParams(); // Reset filters
 
-        url.search = params.toString();  // Convert params to query string
-        console.log("Constructed URL:", url.toString());  // Debugging line
+    const vessel = document.getElementById("vessel-select").value;
+    const movement = document.getElementById("movement-select").value;
+    const displacement = document.getElementById("displacement-select").value;
+    const parameters = getSelectedParameters();
+    const startDate = document.getElementById("start-date").value;
+    const endDate = document.getElementById("end-date").value;
 
-        fetchChartData(url);
-        fetchTableData(url);
-    }   
+    if (vessel) filterParams.append("vessel", vessel);
+    if (movement) filterParams.append("movement", movement);
+    if (displacement) filterParams.append("displacement", displacement);
+    if (startDate) filterParams.append("start_date", startDate);
+    if (endDate) filterParams.append("end_date", endDate);
+    parameters.forEach(param => filterParams.append("parameters", param));
 
+    console.log("Applied Filters:", filterParams.toString()); // Debugging
 
-    async function fetchChartData(url) {
-    const token = localStorage.getItem("access_token");
+    // Fetch with filters applied (start from first page)
+    fetchParameterCorrelation(1);
+}
 
-    // Ensure full data is requested
-    let fullDataUrl = new URL(url);
-    fullDataUrl.searchParams.append("full_data", "true");
+async function fetchParameterCorrelation(page = 1) {
+    if (page === 1) fullData = []; // Clear data when applying new filters
 
-    console.log("Constructed URL for Chart Data:", fullDataUrl.toString()); // Debugging log
+    let params = new URLSearchParams(filterParams.toString()); 
+    params.append("page", page);
+    params.append("page_size", pageSize);
+
+    let url = `${API_BASE_URL}/api/performance/multiple/?${params.toString()}`;
+
+    console.log("Fetching paginated data from:", url); // Debugging
 
     try {
-        const response = await fetchWithAuth(fullDataUrl, {
-            method: "GET",
-            headers: {
-                "Authorization": `Bearer ${token}`,
-                "Content-Type": "application/json"
-            }
-        });
+        const response = await fetchWithAuth(url);
+        if (!response.ok) throw new Error("Failed to fetch data");
 
-        if (!response.ok) {
-            if (response.status === 401) {
-                alert("Session expired. Please log in again.");
-                logout();
-            } else {
-                throw new Error("Failed to fetch correlation data");
-            }
+        const data = await response.json();
+        fullData = [...fullData, ...data.results]; // Append fetched paginated data
+        totalRows = data.count; // Store total rows
+
+        updateTable(); // Update table with paginated data
+        updatePaginationControls(data.next, data.previous); // Update pagination buttons
+        plotScatterChart(fullData); // Plot current paginated data
+
+        // Fetch full data separately for scatter plot
+        if (page === 1) {
+            await fetchFullDataForScatter();
         }
-
-        const chartdata = await response.json();
-        console.log("API Response (Full Data):", chartdata.results);
-        plotScatterChart(chartdata.results); // Ensure full dataset is plotted
     } catch (error) {
-        console.error("Error fetching chart data:", error);
+        console.error("Error fetching paginated data:", error);
     }
 }
 
-async function fetchTableData(url) {
-    const token = localStorage.getItem("access_token");
+// Fetch full data for scatter plot (separately from paginated table data)
+async function fetchFullDataForScatter() {
+    let params = new URLSearchParams(filterParams.toString()); 
+    params.append("full_data", "true"); // Request full unpaginated data
 
-    console.log("Constructed URL for Table Data:", url.toString()); // Debugging log
+    let url = `${API_BASE_URL}/api/performance/multiple/?${params.toString()}`;
+
+    console.log("Fetching full data for scatter plot from:", url); // Debugging
 
     try {
-        const response = await fetchWithAuth(url, {
-            method: "GET",
-            headers: {
-                "Authorization": `Bearer ${token}`,
-                "Content-Type": "application/json"
-            }
-        });
+        const response = await fetchWithAuth(url);
+        if (!response.ok) throw new Error("Failed to fetch full data");
 
-        if (!response.ok) {
-            if (response.status === 401) {
-                alert("Session expired. Please log in again.");
-                logout();
-            } else {
-                throw new Error("Failed to fetch table data");
-            }
-        }
+        const data = await response.json();
+        fullData = data.results; // Store full unpaginated data
 
-        const tabledata = await response.json();
-        console.log("API Response (Paginated Table Data):", tabledata);
-
-        // Display table data
-        displayTable(tabledata.results);
-
-        totalRows = tabledata.count || 0;  // Ensure totalRows updates correctly
-        const maxPages = Math.max(1, Math.ceil(totalRows / pageSize));
-
-        // Update pagination UI based on API response
-        updatePaginationControls(tabledata.next, tabledata.previous);
-
-         // Update pagination info display
-         document.getElementById("pagination-info").textContent = `Page ${currentPage} of ${maxPages}`;
-
+        plotScatterChart(fullData); // Plot full data
     } catch (error) {
-        console.error("Error fetching table data:", error);
+        console.error("Error fetching full data for scatter plot:", error);
     }
 }
 
-    function displayTable(tabledata) {
+// Initial function call
+fetchParameterCorrelation(1);
+
+
+
+
+
+    function displayTable(data) {
+        fullData = data;  // Store all data globally for pagination
+        updateTable();    // Call function to update table with pagination
+    }
+
+    function updateTable() {
     const tableHead = document.getElementById("table-head");
     const tableBody = document.getElementById("table-body");
+    tableHead.innerHTML = "";  // Clear previous headers
+    tableBody.innerHTML = "";  // Clear previous rows
 
-    tableHead.innerHTML = "";
-    tableBody.innerHTML = "";
-
-    if (tabledata.length === 0) {
+    if (fullData.length === 0) {
         tableBody.innerHTML = "<tr><td colspan='5' class='px-4 py-2 border text-center'>No data available</td></tr>";
         return;
     }
 
-    // Get parameter checkboxes to build parameterMap
-    let parameterMap = {};
-    document.querySelectorAll("#parameter-checkboxes input[type='checkbox']").forEach(checkbox => {
-        parameterMap[checkbox.value] = checkbox.nextElementSibling.textContent; // ID → Description
-    });
+    // Extract parameter keys dynamically
+    const parameterKeys = Object.keys(fullData[0]).filter(key => key.startsWith("parameter_"));
 
-    // Extract parameter IDs dynamically from API response
-    const parameterKeys = Object.keys(tabledata[0]).filter(key => key.startsWith("parameter_"));
-
-    // Create table headers dynamically
+    // Rebuild the table header every time
     let headerRow = `
         <tr class="border-b">
             <th class="px-4 py-2 border">Date</th>
@@ -444,119 +426,88 @@ async function fetchTableData(url) {
     `;
 
     parameterKeys.forEach(paramKey => {
-        const paramId = paramKey.replace("parameter_", ""); // Extract numeric ID
-        const paramDescription = parameterMap[paramId] || paramKey; // Use description if available
-        headerRow += `<th class="px-4 py-2 border">${paramDescription}</th>`;
+        headerRow += `<th class="px-4 py-2 border">${paramKey.replace("parameter_", "")}</th>`;
     });
 
     headerRow += "</tr>";
-    tableHead.innerHTML = headerRow;
+    tableHead.innerHTML = headerRow; // Ensure header is added every time
+
+    // Calculate pagination range
+    const start = (currentPage - 1) * pageSize;
+    const paginatedData = fullData.slice(start, start + pageSize);
 
     // Populate table rows dynamically
-    tabledata.forEach(item => {
+    paginatedData.forEach(item => {
         let row = `
             <tr class="border-b">
-                <td class="px-2 py-1 border w-32 whitespace-nowrap">${item.date}</td>
-                <td class="px-4 py-2 border">${formatNumber(item.movement)}</td>
-                <td class="px-4 py-2 border">${formatNumber(item.displacement)}</td>
+                <td class="px-2 py-1 border">${item.date}</td>
+                <td class="px-4 py-2 border">${item.movement}</td>
+                <td class="px-4 py-2 border">${item.displacement}</td>
         `;
 
         parameterKeys.forEach(paramKey => {
-            row += `<td class="px-4 py-2 border">${formatNumber(item[paramKey])}</td>`;
+            row += `<td class="px-4 py-2 border">${item[paramKey]}</td>`;
         });
 
         row += "</tr>";
         tableBody.innerHTML += row;
     });
+
+    updatePaginationControls();
 }
 
-function formatNumber(value) {
-    return (typeof value === "number" && !isNaN(value)) ? value.toFixed(2) : value;
-}
 
 function updatePaginationControls(next, previous) {
     document.getElementById("pagination-info").textContent = `Page ${currentPage} of ${Math.max(1, Math.ceil(totalRows / pageSize))}`;
+
     document.getElementById("prev-page").disabled = !previous;
     document.getElementById("next-page").disabled = !next;
 }
 
 
-function changePage(increment) {
-    const totalPages = Math.ceil(totalRows / pageSize);
-    const newPage = currentPage + increment;
-
-    if (newPage >= 1 && newPage <= totalPages) {
-        currentPage = newPage;
-
-        // Reconstruct the URL with filters and pagination
-        let url = new URL(`${API_BASE_URL}/api/performance/multiple/`);
-        let params = new URLSearchParams();
-
-        // Retrieve current filter values
-        const vessel = document.getElementById("vessel-select").value;
-        const movement = document.getElementById("movement-select").value;
-        const displacement = document.getElementById("displacement-select").value;
-        const parameters = getSelectedParameters();
-        const startDate = document.getElementById("start-date").value;
-        const endDate = document.getElementById("end-date").value;
-
-        // Append filters
-        if (vessel) params.append("vessel", vessel);
-        if (movement) params.append("movement", movement);
-        if (displacement) params.append("displacement", displacement);
-        if (startDate) params.append("start_date", startDate);
-        if (endDate) params.append("end_date", endDate);
-        parameters.forEach(param => params.append("parameters", param));
-
-        // Add pagination
-        params.append("page", currentPage);
-
-        url.search = params.toString();  // Apply filters + page to URL
-
-        console.log(`Paginated URL with Filters (Page ${currentPage}):`, url.toString());  // Debugging
-
-        fetchTableData(url);
+function prevPage() {
+    if (currentPage > 1) {
+        currentPage--;
+        fetchParameterCorrelation(currentPage);
     }
 }
 
-// Next Page
 function nextPage() {
-    changePage(1);
+    const totalPages = Math.ceil(totalRows / pageSize);
+    if (currentPage < totalPages) {
+        currentPage++;
+        fetchParameterCorrelation(currentPage);
+    }
 }
-
-// Previous Page
-function prevPage() {
-    changePage(-1);
-}
-
 
 
 document.getElementById("prev-page").addEventListener("click", prevPage);
 document.getElementById("next-page").addEventListener("click", nextPage);
 
 
-function plotScatterChart(chartdata) {
+function formatNumber(value) {
+    return (typeof value === "number" && !isNaN(value)) ? value.toFixed(2) : value;
+}
+
+function plotScatterChart(data) {
     const ctx = document.getElementById("scatterChart").getContext("2d");
     const selectedParameters = getSelectedParameters();
 
-    // Build parameterMap from checkboxes (ID → Description)
     let parameterMap = {};
     document.querySelectorAll("#parameter-checkboxes input[type='checkbox']").forEach(checkbox => {
-        parameterMap[checkbox.value] = checkbox.nextElementSibling.textContent; // ID → Description
+        parameterMap[checkbox.value] = checkbox.nextElementSibling.textContent;
     });
 
-    const datasets = selectedParameters.map(paramId => {
-        return {
-            label: parameterMap[paramId] || `Parameter ${paramId}`, // Use description if available
-            data: chartdata.map(item => ({
-                x: new Date(item.date),
-                y: item[`parameter_${paramId}`] || 0
-            })),
-            borderColor: getRandomColor(),
-            backgroundColor: "transparent",
-            pointBackgroundColor: getRandomColor()
-        };
-    });
+    const datasets = selectedParameters.map(paramId => ({
+        label: parameterMap[paramId] || `Parameter ${paramId}`,
+        data: fullData.map(item => ({ // Use fullData here
+            x: new Date(item.date),
+            y: item[`parameter_${paramId}`] || 0
+        })),
+        borderColor: getRandomColor(),
+        backgroundColor: "transparent",
+        pointBackgroundColor: getRandomColor()
+    }));
 
     if (scatterChart) {
         scatterChart.destroy();
@@ -575,6 +526,7 @@ function plotScatterChart(chartdata) {
         }
     });
 }
+
 
 function getRandomColor() {
     return `hsl(${Math.random() * 360}, 100%, 50%)`;
