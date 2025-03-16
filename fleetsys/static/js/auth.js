@@ -1,20 +1,13 @@
-const API_BASE_URL = window.location.origin;
-
-document.addEventListener("DOMContentLoaded", function () {
-    checkAuth();
-});
-
+// static/js/auth.js
 function checkAuth() {
     const token = localStorage.getItem("access_token");
     if (!token) {
         redirectToLogin();
         return;
     }
-
     try {
-        const payload = JSON.parse(atob(token.split(".")[1])); // Decode JWT
+        const payload = JSON.parse(atob(token.split(".")[1]));
         const currentTime = Math.floor(Date.now() / 1000);
-
         if (payload.exp < currentTime) {
             console.warn("Access token expired. Trying to refresh...");
             refreshToken().then(success => {
@@ -37,54 +30,30 @@ function redirectToLogin() {
 
 async function refreshToken() {
     const refreshToken = localStorage.getItem("refresh_token");
-    if (!refreshToken) return false;
-
+    if (!refreshToken) {
+        console.warn("No refresh token available.");
+        return false;
+    }
     try {
-        const response = await fetch(`${API_BASE_URL}/api/token/refresh/`, {
+        const response = await fetch(`${window.location.origin}/api/token/refresh/`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ refresh: refreshToken })
         });
-
-        if (!response.ok) return false;
-
+        if (!response.ok) {
+            console.warn("Refresh token is invalid or expired.");
+            return false;
+        }
         const data = await response.json();
-        localStorage.setItem("access_token", data.access);
-        return true;
+        if (data.access) {
+            localStorage.setItem("access_token", data.access);
+            return true;
+        }
+        return false;
     } catch (error) {
         console.error("Error refreshing token:", error);
         return false;
     }
-}
-
-async function fetchWithAuth(url, options = {}) {
-    let token = localStorage.getItem("access_token");
-    if (!token) {
-        redirectToLogin();
-        return;
-    }
-
-    options.headers = {
-        ...options.headers,
-        "Authorization": `Bearer ${token}`,
-        "Content-Type": "application/json"
-    };
-
-    let response = await fetch(url, options);
-
-    if (response.status === 401) {
-        console.warn("Access token expired. Attempting to refresh...");
-        const refreshed = await refreshToken();
-        if (refreshed) {
-            options.headers["Authorization"] = `Bearer ${localStorage.getItem("access_token")}`;
-            response = await fetch(url, options);
-        } else {
-            alert("Session expired. Please log in again.");
-            redirectToLogin();
-        }
-    }
-
-    return response;
 }
 
 function logout() {
@@ -92,3 +61,9 @@ function logout() {
     localStorage.removeItem("refresh_token");
     window.location.href = "/user/login-page/";
 }
+
+// Expose functions to the global scope
+window.checkAuth = checkAuth;
+window.redirectToLogin = redirectToLogin;
+window.refreshToken = refreshToken;
+window.logout = logout;

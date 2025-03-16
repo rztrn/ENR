@@ -14,6 +14,9 @@ from .serializers import (
     VesselListSerializer,
     LoginSerializer,
 )
+import pandas as pd
+from django.http import HttpResponse
+from collections import defaultdict
 
 # 🔹 FIX: Explicitly declare the serializer for `protected_view`
 class ProtectedViewSerializer(serializers.Serializer):
@@ -110,7 +113,7 @@ class ENRMultipleParameterAPIView(FilteredEnrParameterMixin, generics.ListAPIVie
         selected_parameters = self.request.GET.getlist("parameters")  
         if selected_parameters:
             queryset = queryset.filter(parameter__in=selected_parameters)  
-        return queryset.order_by("date")
+        return queryset.order_by("-date")
 
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()
@@ -160,3 +163,69 @@ class FilterOptionsView(APIView):
             "movements": list(movements),
             "displacements": list(displacements)
         })
+    
+class DownloadExcelView(FilteredEnrParameterMixin, APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        """
+        Generate an Excel file from vessel performance data with applied filters.
+        Column headers for parameters will be replaced with parameter descriptions.
+        """
+        # Get filtered queryset
+        queryset = self.get_filtered_queryset(EnrParameter.objects.all())
+        selected_parameters = request.GET.getlist("parameters")
+        if selected_parameters:
+            queryset = queryset.filter(parameter__in=selected_parameters)
+
+        # Sort by descending date
+        queryset = queryset.order_by("-date")
+        raw_data = list(queryset.values("vessel", "date", "movement", "displacement", "parameter", "value"))
+
+        # Build a mapping of parameter id to its description
+        # Assumes that ParameterList has 'id' and 'description' fields.
+        parameter_mapping = dict(ParameterList.objects.values_list("id", "description"))
+
+        # Unpivoting data (similar to your API view)
+        grouped_data = defaultdict(lambda: {"parameters": {}})
+        for entry in raw_data:
+            key = (entry["vessel"], entry["date"], entry["movement"], entry["displacement"])
+            if key not in grouped_data:
+                grouped_data[key] = {
+                    "vessel": entry["vessel"],
+                    "date": entry["date"],
+                    "movement": entry["movement"],
+                    "displacement": entry["displacement"],
+                    "parameters": {}
+                }
+            # Use raw parameter id as key for now
+            grouped_data[key]["parameters"][f"parameter_{entry['parameter']}"] = entry["value"]
+
+        formatted_data = []
+        for key, value in grouped_data.items():
+            formatted_entry = value.copy()
+            # Rename parameter keys using the description mapping
+            new_params = {}
+            for k, v in value["parameters"].items():
+                param_id = k.replace("parameter_", "")
+                # Replace with description if available
+                param_desc = parameter_mapping.get(int(param_id), k)
+                new_params[param_desc] = v
+            formatted_entry.update(new_params)
+            del formatted_entry["parameters"]
+            formatted_data.append(formatted_entry)
+
+        # Convert formatted data to DataFrame
+        df = pd.DataFrame(formatted_data)
+
+        # Prepare Excel response
+        response = HttpResponse(
+            content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
+        response["Content-Disposition"] = 'attachment; filename="vessel_performance.xlsx"'
+
+        # Write DataFrame to Excel using openpyxl engine
+        with pd.ExcelWriter(response, engine="openpyxl") as writer:
+            df.to_excel(writer, sheet_name="Performance Data", index=False)
+
+        return response
