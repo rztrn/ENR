@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}Vessel Parameter{% endblock %}
 
@@ -72,4 +73,12 @@
         <button id="next-page" class="px-3 py-1 bg-gray-300 rounded disabled:opacity-50">Next</button>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/vessel-performance/filters.js' %}"></script>
+<script src="{% static 'js/vessel-performance/api.js' %}"></script>
+<script src="{% static 'js/vessel-performance/table.js' %}"></script>
+<script src="{% static 'js/vessel-performance/chart.js' %}"></script>
+<script src="{% static 'js/vessel-performance/main.js' %}"></script>
 {% endblock %}

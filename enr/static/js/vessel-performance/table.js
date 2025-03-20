@@ -67,10 +67,6 @@ function displayTable(data) {
     });
 }
 
-function formatNumber(value) {
-    return (typeof value === "number" && !isNaN(value)) ? value.toFixed(2) : value;
-}
-
 function updatePaginationControls(next, previous) {
     document.getElementById("prev-page").disabled = !previous;
     document.getElementById("next-page").disabled = !next;

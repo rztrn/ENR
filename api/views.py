@@ -7,9 +7,10 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from collections import defaultdict
-from enr.models import EnrParameter, ParameterList, VesselList
+from enr.models import EnrParameter, ParameterList, VesselList, SeaTrialParameter
 from .serializers import (
     EnrParameterSerializer,
+    SeaTrialParameterSerializer,
     ParameterListSerializer,
     VesselListSerializer,
     LoginSerializer,
@@ -93,6 +94,7 @@ class FilteredEnrParameterMixin:
 
         return base_queryset
 
+# Vessel-Performance
 # Vessel Performance API View (Single Parameter)
 class ENRSingleParameterAPIView(FilteredEnrParameterMixin, generics.ListAPIView):
     serializer_class = EnrParameterSerializer
@@ -229,3 +231,12 @@ class DownloadExcelView(FilteredEnrParameterMixin, APIView):
             df.to_excel(writer, sheet_name="Performance Data", index=False)
 
         return response
+    
+
+# Vessel-Seatrial
+class SeaTrialParameterAPIView(FilteredEnrParameterMixin, generics.ListAPIView):
+    serializer_class = SeaTrialParameterSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return self.get_filtered_queryset(SeaTrialParameter.objects.all()).order_by("timestamp")
