@@ -7,13 +7,14 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from collections import defaultdict
-from enr.models import EnrParameter, ParameterList, VesselList, SeaTrialParameter
+from enr.models import EnrParameter, ParameterList, VesselList, SeaTrialParameter, SeaTrialModels
 from .serializers import (
     EnrParameterSerializer,
     SeaTrialParameterSerializer,
     ParameterListSerializer,
     VesselListSerializer,
     LoginSerializer,
+    SeaTrialModelsSerializer
 )
 import pandas as pd
 from django.http import HttpResponse
@@ -236,7 +237,20 @@ class DownloadExcelView(FilteredEnrParameterMixin, APIView):
 # Vessel-Seatrial
 class SeaTrialParameterAPIView(FilteredEnrParameterMixin, generics.ListAPIView):
     serializer_class = SeaTrialParameterSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated] 
 
     def get_queryset(self):
         return self.get_filtered_queryset(SeaTrialParameter.objects.all()).order_by("timestamp")
+
+
+# Vessel-Seatrial Models
+class SeaTrialModelsAPIView(FilteredEnrParameterMixin, generics.ListAPIView):
+    serializer_class = SeaTrialModelsSerializer
+    permission_classes = [IsAuthenticated] 
+
+    def get_queryset(self):
+        queryset = SeaTrialModels.objects.all()
+        model_type = self.request.query_params.get('model_type')
+        if model_type:
+            queryset = queryset.filter(model_type=model_type)
+        return self.get_filtered_queryset(queryset)

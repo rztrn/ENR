@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from enr.models import EnrParameter, SeaTrialParameter, ParameterList, VesselList
+from enr.models import EnrParameter, SeaTrialParameter, ParameterList, VesselList, SeaTrialModels
 
 class LoginSerializer(serializers.Serializer):
     username = serializers.CharField()
@@ -14,12 +14,19 @@ class ProtectedSerializer(serializers.Serializer):
 class VesselListSerializer(serializers.ModelSerializer):
     class Meta:
         model = VesselList
-        fields = ["id", "vesselname"]  # Specify the fields you need
+        fields = [
+            "id", 
+            "vesselname"
+        ]  # Specify the fields you need
 
 class ParameterListSerializer(serializers.ModelSerializer):
     class Meta:
         model = ParameterList
-        fields = ['id', 'code', 'description']
+        fields = [
+            'id', 
+            'code', 
+            'description'
+        ]
 
 # ENR SERIALIZER
 
@@ -29,7 +36,15 @@ class EnrParameterSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = EnrParameter
-        fields = ['vessel', 'date', 'movement', 'displacement', 'parameter', 'description', 'value']
+        fields = [
+            'vessel', 
+            'date', 
+            'movement', 
+            'displacement', 
+            'parameter', 
+            'description', 
+            'value'
+        ]
 
 # SEATRIAL SERIALIZER
 
@@ -39,4 +54,39 @@ class SeaTrialParameterSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = SeaTrialParameter
-        fields = ['vessel', 'session', 'timestamp', 'displacement', 'parameter', 'description', 'value']
+        fields = [
+            'vessel', 
+            'session', 
+            'timestamp', 
+            'displacement', 
+            'parameter', 
+            'description', 
+            'value'
+        ]
+
+class SeaTrialModelsSerializer(serializers.ModelSerializer):
+    vessel_name = serializers.CharField(source='vessel.name', read_only=True)
+    session_name = serializers.CharField(source='session.session_name', read_only=True)
+    parameter_x_name = serializers.CharField(source='parameter_x.name', read_only=True)
+    parameter_y_name = serializers.CharField(source='parameter_y.name', read_only=True)
+
+    class Meta:
+        model = SeaTrialModels
+        fields = [
+            'id',
+            'vessel',
+            'vessel_name',
+            'session',
+            'session_name',
+            'model_type',
+            'formula_type',
+            'parameter_x',
+            'parameter_x_name',
+            'parameter_y',
+            'parameter_y_name',
+            'coefficient_a',
+            'coefficient_b',
+            'coefficient_c',
+            'coefficient_determination',
+            'created_at',
+        ]

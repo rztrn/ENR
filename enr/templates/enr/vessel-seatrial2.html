@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Vessel Sea Trial Record{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto p-6">
+    <h2 class="text-2xl font-bold mb-4 text-center">Vessel Sea Trial</h2>
+
+    <!-- Filters -->
+    <div class="flex flex-wrap gap-4 justify-center mb-6">
+        <select id="vessel-select" class="px-4 py-2 border rounded-md">
+            <option value="">Loading vessels...</option>
+        </select>
+        <button onclick="applyFilters()" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">
+            Apply Filters
+        </button>
+    </div>
+
+    <!-- Scatter Chart -->
+    <h2 class="text-2xl font-bold mb-4 text-center">Internal & External Factor</h2>
+    <div class="flex space-x-4">
+        <div class="bg-white shadow-lg rounded-2xl p-6 h-[500px] flex-1 flex justify-center items-center">
+            <canvas id="scatterChart1" class="w-full h-full"></canvas>
+        </div>
+        <div class="bg-white shadow-lg rounded-2xl p-6 h-[500px] flex-1 flex justify-center items-center">
+            <canvas id="scatterChart2" class="w-full h-full"></canvas>
+        </div>
+    </div>
+    <div class="flex space-x-4 mt-4">
+        <div id="regressionInfo1" class="flex-1 text-center text-sm text-gray-700"></div>
+        <div id="regressionInfo2" class="flex-1 text-center text-sm text-gray-700"></div>
+    </div>
+
+    <!-- Table -->
+    <div class="overflow-x-auto mt-4">
+        <table class="min-w-full border border-gray-400 shadow-md rounded-lg text-sm">
+            <thead class="bg-gray-200 text-gray-700">
+                <tr id="table-head" class="border border-gray-400">
+                    <!-- Dynamic headers will be added here -->
+                </tr>
+            </thead>
+            <tbody id="table-body" class="text-center text-gray-900">
+                <!-- Dynamic rows will be added here -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/regression@2.0.1/dist/regression.min.js"></script>
+<script src="{% static 'js/vessel-seatrial2/filters.js' %}"></script>
+<script src="{% static 'js/vessel-seatrial2/api.js' %}"></script>
+<script src="{% static 'js/vessel-seatrial2/table.js' %}"></script>
+<script src="{% static 'js/vessel-seatrial2/chart.js' %}"></script>
+<script src="{% static 'js/vessel-seatrial2/main.js' %}"></script>
+{% endblock %}
