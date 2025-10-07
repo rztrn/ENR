@@ -54,11 +54,13 @@ class SeaTrialParameter(models.Model):
 class SeaTrialModels(models.Model):
     FORMULA_CHOICES = [
         ("quadratic", "Quadratic (y = ax² + bx + c)"),
+        ("linear", "Linear (y = mx + b)"),
     ]
 
     MODEL_CHOICES = [
         ("internal", "FOC vs M/E Power"),
         ("external", "Ship Speed vs M/E Power"),
+        ("exponent", "Power Plan vs Exponent")
     ]
 
     vessel = models.ForeignKey(VesselList, on_delete=models.CASCADE)
@@ -83,3 +85,17 @@ class SeaTrialModels(models.Model):
 
     def __str__(self):
         return f"{self.vessel.name} - {self.session.session_name} ({self.parameter_y.name} vs {self.parameter_x.name})"
+
+class BenchmarkedEnrParameter(models.Model):
+    enr_parameter = models.ForeignKey(EnrParameter, on_delete=models.CASCADE)
+    benchmarked_value = models.FloatField(null=True, blank=True)
+    difference = models.FloatField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Comparison for {self.enr_parameter.parameter.code} on {self.date}"
+    
+
+
+
+

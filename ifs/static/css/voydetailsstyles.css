@@ -1,0 +1,211 @@
+/* General styles */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    padding: 20px;
+    font-size: 12px;
+}
+
+.container {
+    max-width: 100%;
+    margin: 0 auto;
+}
+
+.header {
+    margin-bottom: 20px;
+}
+
+h1 {
+    font-size: 24px;
+    margin-bottom: 15px;
+}
+
+/* Tab styles */
+.tabs {
+    display: flex;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 20px;
+}
+
+.tab-btn {
+    padding: 8px 16px;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.tab-btn.active {
+    border-bottom: 2px solid #0070f3;
+    color: #0070f3;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* Form header */
+.form-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.form-header h2 {
+    font-size: 18px;
+}
+
+.form-header button {
+    padding: 6px 12px;
+    background-color: #0070f3;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.form-header button:hover {
+    background-color: #0051b3;
+}
+
+/* Table container */
+.table-container {
+    display: flex;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    overflow: hidden;
+    height: 70vh;
+}
+
+/* Fixed table styles */
+.fixed-table-container {
+    overflow: hidden;
+    border-right: 1px solid #ddd;
+}
+
+.fixed-table {
+    border-collapse: collapse;
+    background-color: white;
+}
+
+/* Scrollable table styles */
+.scroll-table-container {
+    overflow-x: auto;
+    flex-grow: 1;
+    max-width: 60%;
+}
+
+.scroll-table {
+    border-collapse: collapse;
+    background-color: white;
+}
+
+/* Common table styles */
+th, td {
+    border: 1px solid #ddd;
+    padding: 2px 4px;
+    font-size: 11px;
+    white-space: nowrap;
+    height: 24px;
+}
+
+th {
+    text-align: center;
+    background-color: #f9f9f9;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+th[rowspan="2"] {
+    vertical-align: middle;
+}
+
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.small-text {
+    font-size: 9px;
+}
+
+/* Fixed column widths */
+.fixed-table th:nth-child(1), .fixed-table td:nth-child(1) { /* No */
+    width: 30px;
+    text-align: center;
+}
+
+.fixed-table th:nth-child(2), .fixed-table td:nth-child(2) { /* Activity */
+    width: 100px;
+}
+
+.fixed-table th:nth-child(3), .fixed-table td:nth-child(3) { /* Sail No */
+    width: 30px;
+    text-align: center;
+}
+
+.fixed-table th:nth-child(4), .fixed-table td:nth-child(4) { /* Date Time */
+    width: 120px;
+}
+
+.fixed-table th:nth-child(5), .fixed-table td:nth-child(5) { /* Timezone */
+    width: 30px;
+    text-align: center;
+}
+
+.fixed-table th:nth-child(6), .fixed-table td:nth-child(6) { /* Step */
+    width: 120px;
+}
+
+.fixed-table th:nth-child(7), .fixed-table td:nth-child(7) { /* Duration */
+    width: 30px;
+    text-align: center;
+}
+
+/* Ensure second header row is also sticky */
+tr:nth-child(2) th {
+    position: sticky;
+    top: 24px; /* Height of the first header row */
+    z-index: 10;
+    background-color: white;
+}
+
+/* Placeholder styles */
+.placeholder {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 40px;
+    text-align: center;
+}
+
+.placeholder p {
+    font-size: 16px;
+    color: #666;
+}
+
+.placeholder .small-text {
+    font-size: 12px;
+    color: #999;
+    margin-top: 10px;
+}
+
+/* Ensure vertical scrolling is synchronized */
+.fixed-table-container, .scroll-table-container {
+    overflow-y: auto;
+}
+
+/* Center align numeric cells */
+td.numeric {
+    text-align: center;
+}

@@ -1,0 +1,915 @@
+/* Base styles */
+.svt-container * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
+
+.svt-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 16px;
+    background-color: white;
+}
+
+/* App title */
+.svt-app-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 16px;
+}
+
+/* Scorecards */
+.svt-scorecards {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+@media (min-width: 768px) {
+    .svt-scorecards {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+.svt-scorecard {
+    background-color: white;
+    padding: 12px;
+    border-radius: 8px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e5e7eb;
+}
+
+.svt-scorecard-title {
+    color: #6b7280;
+    font-size: 11px;
+    font-weight: 500;
+    margin-bottom: 4px;
+}
+
+.svt-scorecard-value {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1f2937;
+}
+
+/* Main content layout */
+.svt-main-content {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+}
+
+@media (min-width: 992px) {
+    .svt-main-content {
+        grid-template-columns: 1fr 3fr;
+    }
+}
+
+/* Filter panel */
+.svt-filters-container {
+    margin-bottom: 16px;
+}
+
+.svt-filter-panel {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e5e7eb;
+    overflow: hidden;
+}
+
+.svt-filter-group {
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.svt-filter-group:last-child {
+    border-bottom: none;
+}
+
+.svt-filter-title {
+    background-color: #eff6ff;
+    color: #1f2937;
+    padding: 8px 12px;
+    font-size: 11px;
+    font-weight: 500;
+}
+
+.svt-filter-items {
+    padding: 8px;
+}
+
+.svt-filter-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 4px;
+    cursor: pointer;
+}
+
+.svt-filter-checkbox {
+    width: 14px;
+    height: 14px;
+    border: 1px solid #d1d5db;
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 6px;
+    color: white;
+}
+
+.svt-filter-checkbox.checked {
+    background-color: #2563eb;
+    border-color: #2563eb;
+}
+
+.svt-filter-label {
+    font-size: 11px;
+    color: #4b5563;
+}
+
+/* Voyages panel */
+.svt-voyages-panel {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e5e7eb;
+    padding: 16px;
+}
+
+.svt-voyages-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.svt-voyage-card {
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 12px;
+}
+
+.svt-voyage-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f9fafb;
+    padding: 8px 12px;
+    border-bottom: 1px solid #e5e7eb;
+    cursor: pointer;
+}
+
+.svt-voyage-name {
+    font-weight: 700;
+    color: #1f2937;
+    font-size: 12px;
+}
+
+.svt-voyage-id {
+    color: #ef4444;
+    font-weight: 700;
+    font-size: 11px;
+    margin-left: 4px;
+    margin-right: 4px;
+}
+
+.svt-voyage-date {
+    color: #6b7280;
+    font-size: 10px;
+    margin-left: auto;
+    margin-right: 8px;
+}
+
+.svt-voyage-status {
+    color: #10b981;
+    font-size: 10px;
+}
+
+.svt-voyage-details-link {
+    color: #2563eb;
+    font-size: 11px;
+    font-weight: 500;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+}
+
+.svt-voyage-details-link:hover {
+    text-decoration: underline;
+}
+
+.svt-voyage-content {
+    padding: 12px;
+    background-color: #f9fafb;
+    display: none;
+}
+
+.svt-voyage-content.expanded {
+    display: block;
+}
+
+.svt-voyage-info-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    margin-bottom: 8px;
+}
+
+.svt-voyage-charter-info {
+    color: #1f2937;
+    font-weight: 500;
+}
+
+/* Voyage progress */
+.svt-voyage-progress {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 8px;
+}
+
+.svt-port-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.svt-port-indicator {
+    width: 16px;
+    height: 16px;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 4px;
+    background-color: white;
+}
+
+.svt-port-indicator.visited {
+    background-color: #10b981;
+    border-color: #10b981;
+    color: white;
+}
+
+.svt-port-indicator.current {
+    border: 2px solid #f59e0b;
+}
+
+.svt-port-name {
+    font-size: 9px;
+    color: #4b5563;
+    text-align: center;
+    max-width: 60px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.svt-port-date {
+    font-size: 8px;
+    color: #6b7280;
+    margin-top: 2px;
+}
+
+.svt-progress-line {
+    flex: 1;
+    height: 1px;
+    background-color: #d1d5db;
+    margin: 0 4px;
+    position: relative;
+}
+
+.svt-progress-line.active {
+    background-color: #3b82f6;
+}
+
+.svt-progress-arrow {
+    position: absolute;
+    top: -8px;
+    right: 0;
+    font-size: 12px;
+    color: #9ca3af;
+}
+
+.svt-progress-arrow.active {
+    color: #3b82f6;
+}
+
+/* Voyage details page */
+.svt-voyage-details {
+    display: none;
+    padding: 16px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e5e7eb;
+    margin-top: 16px;
+}
+
+.svt-back-button {
+    color: #2563eb;
+    cursor: pointer;
+    margin-bottom: 16px;
+    display: inline-block;
+}
+
+.svt-back-button:hover {
+    text-decoration: underline;
+}
+
+.svt-voyage-details-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 16px;
+}
+
+.svt-voyage-details-content {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.svt-voyage-info-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+}
+
+@media (min-width: 768px) {
+    .svt-voyage-info-container {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+.svt-section-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.svt-info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.svt-info-label {
+    color: #6b7280;
+}
+
+.svt-info-value {
+    font-weight: 500;
+}
+
+.svt-route-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.svt-route-item {
+    display: flex;
+    align-items: flex-start;
+}
+
+.svt-route-indicator {
+    width: 24px;
+    height: 24px;
+    border: 2px solid #d1d5db;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 12px;
+    background-color: white;
+}
+
+.svt-route-indicator.visited {
+    background-color: #10b981;
+    border-color: #10b981;
+    color: white;
+}
+
+.svt-route-indicator.current {
+    border: 2px solid #f59e0b;
+}
+
+.svt-route-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.svt-route-port {
+    font-weight: 500;
+    margin-bottom: 2px;
+}
+
+.svt-route-date {
+    font-size: 12px;
+    color: #6b7280;
+    margin-bottom: 2px;
+}
+
+.svt-route-status {
+    font-size: 12px;
+}
+
+.svt-route-status.visited {
+    color: #10b981;
+}
+
+.svt-route-status.current {
+    color: #3b82f6;
+}
+
+.svt-route-status.upcoming {
+    color: #6b7280;
+}
+
+/* Progress container */
+.svt-progress-container {
+    background-color: #f9fafb;
+    padding: 24px;
+    border-radius: 8px;
+    position: relative;
+}
+
+.svt-progress-bar {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background-color: #d1d5db;
+    transform: translateY(-50%);
+    z-index: 1;
+}
+
+.svt-progress-ports {
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+    z-index: 2;
+}
+
+.svt-progress-port {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.svt-progress-port-indicator {
+    width: 32px;
+    height: 32px;
+    border: 2px solid #d1d5db;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 8px;
+    background-color: white;
+}
+
+.svt-progress-port-indicator.visited {
+    background-color: #10b981;
+    border-color: #10b981;
+    color: white;
+}
+
+.svt-progress-port-indicator.current {
+    border: 2px solid #f59e0b;
+}
+
+.svt-progress-port-name {
+    font-size: 12px;
+    font-weight: 500;
+    text-align: center;
+}
+
+.svt-ship-icon {
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 20px;
+    color: #3b82f6;
+    z-index: 3;
+}
+
+/* No voyages message */
+.svt-no-voyages {
+    text-align: center;
+    padding: 24px;
+    color: #6b7280;
+}
+
+/* Loading indicator */
+.svt-loading {
+    text-align: center;
+    padding: 24px;
+    color: #6b7280;
+    display: none;
+}
+
+/* ===== VOYAGE SUMMARY TABLE STYLES ===== */
+
+body {
+  background-color: #f5f5f5;
+}
+
+.svt-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 16px;
+  background-color: white;
+}
+
+/* Main container */
+.svt-summary-container {
+  display: flex;
+  color: #333;
+  background-color: #f5f5f5;
+}
+
+/* Sidebar styles */
+.svt-sidebar {
+  width: 240px;
+  background-color: #f5f5f5;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.svt-filter-section {
+  margin-bottom: 15px;
+}
+
+/* Updated filter list styles for 5-item limit with scrolling */
+.svt-filter-list {
+  max-height: 120px;
+  overflow-y: auto;
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+  background-color: white;
+}
+
+/* Custom scrollbar for filter lists */
+.svt-filter-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.svt-filter-list::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.svt-filter-list::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.svt-filter-list::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Updated filter item styles */
+.svt-filter-item {
+  display: flex;
+  align-items: center;
+  padding: 4px 6px;
+  cursor: pointer;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.svt-filter-item:last-child {
+  border-bottom: none;
+}
+
+.svt-filter-item:hover {
+  background-color: #f9fafb;
+}
+
+.svt-filter-checkbox {
+  width: 14px;
+  height: 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 2px;
+  margin-right: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  background-color: white;
+  flex-shrink: 0;
+}
+
+.svt-filter-checkbox.checked {
+  background-color: #2563eb;
+  color: white;
+  border-color: #2563eb;
+}
+
+.svt-filter-label {
+  font-size: 11px;
+  color: #4b5563;
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.svt-title {
+  margin: 0 0 10px 0;
+  font-size: 16px;
+  font-weight: bold;
+  color: #1f2937;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+/* Table controls */
+.svt-table-controls {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 8px;
+}
+
+.svt-items-per-page {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: #4b5563;
+}
+
+.svt-items-per-page select {
+  padding: 3px 6px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  font-size: 12px;
+  background-color: white;
+}
+
+/* Table styles */
+.svt-table-container {
+  overflow-x: auto;
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+  margin-bottom: 16px;
+}
+
+.svt-voyage-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.svt-voyage-table th {
+  background-color: #eff6ff;
+  border: 1px solid #d1d5db;
+  padding: 6px;
+  text-align: left;
+  position: sticky;
+  top: 0;
+  cursor: pointer;
+  font-size: 11px;
+  white-space: nowrap;
+  color: #1f2937;
+}
+
+.svt-voyage-table th:hover {
+  background-color: #dbeafe;
+}
+
+.svt-voyage-table td {
+  border: 1px solid #e5e7eb;
+  padding: 4px 6px;
+  white-space: nowrap;
+  height: 20px;
+  line-height: 20px;
+  vertical-align: middle;
+  color: #4b5563;
+}
+
+.svt-voyage-table tr:nth-child(even) {
+  background-color: #f9fafb;
+}
+
+.svt-voyage-table tr:hover {
+  background-color: #f3f4f6;
+}
+
+.svt-sort-indicator {
+  margin-left: 3px;
+  display: none;
+  font-size: 8px;
+}
+
+/* Port tag styles */
+.svt-port-tag {
+  display: inline-block;
+  background-color: #f0f7fa;
+  border: 1px solid #d1e7f0;
+  border-radius: 2px;
+  padding: 0 1px;
+  margin-right: 1px;
+  font-size: 9px;
+  line-height: 12px;
+}
+
+/* Destinations cell with navigation arrows */
+.svt-destinations-cell {
+  position: relative;
+  max-width: 180px;
+  padding: 2px 20px 2px 6px !important;
+}
+
+.svt-destinations-content {
+  overflow-x: hidden;
+  white-space: nowrap;
+  scroll-behavior: smooth;
+}
+
+.svt-destinations-nav {
+  position: absolute;
+  right: 2px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.svt-nav-arrow {
+  width: 12px;
+  height: 8px;
+  background-color: #e5e7eb;
+  border: 1px solid #d1d5db;
+  border-radius: 2px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 8px;
+  color: #6b7280;
+  user-select: none;
+}
+
+.svt-nav-arrow:hover {
+  background-color: #d1d5db;
+  color: #374151;
+}
+
+.svt-nav-arrow.disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* Status tag styles */
+.svt-status-tag {
+  display: inline-block;
+  border-radius: 2px;
+  padding: 0 4px;
+  font-size: 10px;
+  line-height: 16px;
+  font-weight: bold;
+}
+
+.svt-status-in-progress {
+  background-color: #dbeafe;
+  color: #0066cc;
+  border: 1px solid #bfdbfe;
+}
+
+.svt-status-finished {
+  background-color: #d1fae5;
+  color: #10b981;
+  border: 1px solid #a7f3d0;
+}
+
+.svt-status-approved {
+  background-color: #e0e7ff;
+  color: #6366f1;
+  border: 1px solid #c7d2fe;
+}
+
+/* Details cell */
+.svt-details-cell {
+  text-align: center;
+  cursor: pointer;
+  color: #2563eb;
+  font-weight: bold;
+}
+
+.svt-no-data {
+  padding: 20px;
+  text-align: center;
+  font-style: italic;
+  color: #6b7280;
+}
+
+/* Pagination styles */
+.svt-pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  font-size: 12px;
+  color: #4b5563;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.svt-pagination-info {
+  flex: 1;
+}
+
+.svt-pagination-controls {
+  display: flex;
+  gap: 4px;
+}
+
+.svt-pagination-button {
+  padding: 4px 8px;
+  background-color: white;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  color: #4b5563;
+}
+
+.svt-pagination-button:hover:not(:disabled) {
+  background-color: #f3f4f6;
+}
+
+.svt-pagination-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.svt-pagination-button.active {
+  background-color: #2563eb;
+  color: white;
+  border-color: #2563eb;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .svt-summary-container {
+    flex-direction: column;
+  }
+
+  .svt-sidebar {
+    width: auto;
+    border-right: none;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .svt-filter-section {
+    margin-bottom: 8px;
+  }
+
+  .svt-filter-list {
+    max-height: 100px;
+  }
+
+  .svt-pagination {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* ——————————————————————————————
+   Only these overrides go at the bottom of voymenu.css
+   —————————————————————————————— */
+
+/* 1) Widen the right‑hand column */
+@media (min-width: 992px) {
+  .svt-main-content {
+    grid-template-columns: 1fr 4fr; /* was 1fr 3fr */
+  }
+}
+
+/* 2) Make sure our table panel & table fill that space */
+.svt-table-panel,
+.svt-table-container,
+.svt-voyage-table {
+  width: 100%;
+}
+
+/* 3) Optional: force horizontal scroll if too many columns */
+.svt-voyage-table {
+  min-width: 800px;
+  table-layout: auto; /* or fixed if you want all cols equal */
+}

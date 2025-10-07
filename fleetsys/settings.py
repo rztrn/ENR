@@ -50,8 +50,11 @@ INSTALLED_APPS = [
     
     # Custom apps
     'enr',
+    'ifs',
     'api',
     'user',
+    'fleetsys',
+
 ]
 
 

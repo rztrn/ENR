@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css%}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+{% endblock %}
+
+{% block title %}Vessel Sea Trial Record{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <header>
+            <h1>Shipping Voyage Tracker</h1>
+        </header>
+        
+        <!-- Scorecards -->
+        <div class="scorecards">
+            <div class="scorecard">
+                <h3>Total Vessels</h3>
+                <p id="total-vessels">0</p>
+            </div>
+            <div class="scorecard">
+                <h3>Active Voyages</h3>
+                <p id="active-voyages">0</p>
+            </div>
+            <div class="scorecard">
+                <h3>At Port</h3>
+                <p id="at-port">0</p>
+            </div>
+            <div class="scorecard">
+                <h3>At Sea</h3>
+                <p id="at-sea">0</p>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <!-- Filters -->
+            <div class="filters">
+                <div class="filter-group">
+                    <h2>VESSEL LIST</h2>
+                    <div id="vessel-filters" class="filter-options">
+                        <!-- Will be populated by JavaScript -->
+                    </div>
+                </div>
+                
+                <div class="filter-group">
+                    <h2>CHARTER TYPE</h2>
+                    <div id="charter-filters" class="filter-options">
+                        <!-- Will be populated by JavaScript -->
+                    </div>
+                </div>
+                
+                <div class="filter-group">
+                    <h2>CHARTERER</h2>
+                    <div id="charterer-filters" class="filter-options">
+                        <!-- Will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Voyages -->
+            <div class="voyages">
+                <h2>ONGOING VOYAGES</h2>
+                <div id="voyage-cards" class="voyage-cards">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="{% static 'js/app.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,287 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background-color: #f5f7fa;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 16px;
+}
+
+header {
+    margin-bottom: 16px;
+}
+
+h1 {
+    color: #2c3e50;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.scorecards {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+@media (min-width: 768px) {
+    .scorecards {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+.scorecard {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 12px;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.scorecard h3 {
+    color: #7f8c8d;
+    margin-bottom: 4px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.scorecard p {
+    color: #2c3e50;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.main-content {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+}
+
+@media (min-width: 992px) {
+    .main-content {
+        grid-template-columns: 300px 1fr;
+    }
+}
+
+.filters {
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border: 1px solid #ddd;
+    overflow: hidden;
+}
+
+.filter-group {
+    border-bottom: 1px solid #eee;
+    margin-top: 5px;
+}
+
+.filter-group:last-child {
+    border-bottom: none;
+}
+
+.filter-group h2 {
+    background-color: #e3f2fd;
+    color: #2c3e50;
+    padding: 8px 12px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.filter-options {
+    padding: 8px;
+}
+
+.filter-option {
+    display: flex;
+    align-items: center;
+    margin-bottom: 4px;
+}
+
+.filter-option:last-child {
+    margin-bottom: 0;
+}
+
+.filter-option input[type="checkbox"] {
+    margin-right: 6px;
+    width: 14px;
+    height: 14px;
+}
+
+.filter-option label {
+    font-size: 12px;
+    color: #333;
+}
+
+.voyages {
+    background-color: #fff;
+    border-radius: 5px;
+    padding: 16px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border: 1px solid #ddd;
+}
+
+.voyages h2 {
+    color: #2c3e50;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #eee;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.voyage-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.voyage-card {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.voyage-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f8f9fa;
+    padding: 8px 12px;
+    border-bottom: 1px solid #eee;
+}
+
+.vessel-name {
+    font-size: 14px;
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+.voyage-details-btn {
+    color: #3498db;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 12px;
+}
+
+.voyage-info {
+    padding: 12px;
+}
+
+.voyage-meta {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.voyage-number {
+    color: #e74c3c;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+.voyage-date {
+    font-size: 12px;
+    color: #333;
+}
+
+.voyage-status {
+    color: #27ae60;
+    font-size: 12px;
+}
+
+.charter-info {
+    font-size: 12px;
+    color: #34495e;
+    text-align: right;
+}
+
+.voyage-progress {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 12px;
+}
+
+.port {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.port-checkbox {
+    width: 20px;
+    height: 20px;
+    border: 1px solid #ccc;
+    border-radius: 2px;
+    margin-bottom: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    background-color: white;
+    font-size: 12px;
+}
+
+.port-checkbox.checked {
+    background-color: #27ae60;
+    border-color: #27ae60;
+}
+
+.port-checkbox.current {
+    background-color: white;
+    border-color: #f39c12;
+    border-width: 2px;
+}
+
+.port-name {
+    font-size: 10px;
+    color: #34495e;
+    max-width: 60px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.port-date {
+    font-size: 9px;
+    color: #7f8c8d;
+    margin-top: 2px;
+}
+
+.voyage-arrow {
+    flex: 1;
+    height: 1px;
+    background-color: #bdc3c7;
+    position: relative;
+    margin: 0 4px;
+}
+
+.voyage-arrow.active {
+    background-color: #3498db;
+}
+
+.voyage-arrow::after {
+    content: '→';
+    position: absolute;
+    top: -8px;
+    right: -4px;
+    color: #7f8c8d;
+    font-size: 14px;
+}
+
+.voyage-arrow.active::after {
+    color: #3498db;
+}

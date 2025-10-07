@@ -15,9 +15,12 @@
             <!-- Desktop Menu -->
             <div id="menu" class="hidden lg:flex space-x-6">
                 <a href="{% url 'home' %}" class="hover:text-gray-300">Home</a>
-                <a href="{% url 'vessel-performance' %}" class="hover:text-gray-300">Vessel Performance</a>
-                <a href="{% url 'vessel-seatrial' %}" class="hover:text-gray-300">Vessel Seatrial</a>
-                <a href="{% url 'vessel-seatrial2' %}" class="hover:text-gray-300">Vessel Seatrial2</a>
+                <a href="{% url 'vessel-performance' %}" class="hover:text-gray-300">Performance</a>
+                <a href="{% url 'vessel-benchmark' %}" class="hover:text-gray-300">Benchmark</a>
+                <a href="{% url 'vessel-seatrial2' %}" class="hover:text-gray-300">Seatrial</a>
+                <a href="{% url 'vessel-factors' %}" class="hover:text-gray-300">Factors</a>
+                <a href="{% url 'voy-menu' %}" class="hover:text-gray-300">Voyage Menu</a>
+                <a href="{% url 'voy-summary' %}" class="hover:text-gray-300">Voyage Sum</a>
             </div>
         </div>
     </div>
@@ -25,9 +28,10 @@
     <!-- Mobile Menu -->
     <div id="mobile-menu" class="hidden lg:hidden bg-gray-800 text-white py-2 px-4">
         <a href="{% url 'home' %}" class="block py-2">Home</a>
-        <a href="{% url 'vessel-performance' %}" class="block py-2">Vessel Performance</a>
-        <a href="{% url 'vessel-seatrial' %}" class="block py-2">Vessel Seatrial</a>
-        <a href="{% url 'vessel-seatrial2' %}" class="block py-2">Vessel Seatrial</a>
+        <a href="{% url 'vessel-performance' %}" class="block py-2">Performance</a>
+        <a href="{% url 'vessel-benchmark' %}" class="block py-2">Benchmark</a>
+        <a href="{% url 'vessel-seatrial2' %}" class="block py-2">Seatrial</a>
+        <a href="{% url 'vessel-factors' %}" class="block py-2">Factors</a>
     </div>
 
     <script>

@@ -199,3 +199,4 @@ while True:
             process_new_file(new_file)
             processed_files.add(new_file)  # Mark as processed
     time.sleep(10)  # Check every 10 seconds
+ 

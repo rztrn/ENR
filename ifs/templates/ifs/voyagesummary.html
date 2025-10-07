@@ -1,0 +1,206 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/voymenu.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Tabs CSS */
+        .svt-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .svt-tab {
+            padding: 0.5rem 1rem;
+            border: none;
+            background: #eee;
+            cursor: pointer;
+            font-weight: 600;
+            border-radius: 4px 4px 0 0;
+        }
+
+        .svt-tab.active {
+            background: #fff;
+            border-bottom: 2px solid #007BFF;
+        }
+
+        .svt-tab-content {
+            background: #fff;
+            padding: 1rem;
+            border: 1px solid #ddd;
+            border-top: none;
+        }
+    </style>
+{% endblock %}
+
+{% block title %}Vessel Sea Trial Record{% endblock %}
+
+{% block content %}
+<div class="svt-container">
+    <h1 class="svt-app-title">Shipping Voyage Tracker</h1>
+
+    <!-- Scorecards -->
+    <div class="svt-scorecards">
+        <div class="svt-scorecard">
+            <h3 class="svt-scorecard-title">Total Vessels</h3>
+            <p class="svt-scorecard-value" id="svt-total-vessels">0</p>
+        </div>
+        <div class="svt-scorecard">
+            <h3 class="svt-scorecard-title">Active Voyages</h3>
+            <p class="svt-scorecard-value" id="svt-active-voyages">0</p>
+        </div>
+        <div class="svt-scorecard">
+            <h3 class="svt-scorecard-title">At Port</h3>
+            <p class="svt-scorecard-value" id="svt-at-port">0</p>
+        </div>
+        <div class="svt-scorecard">
+            <h3 class="svt-scorecard-title">At Sea</h3>
+            <p class="svt-scorecard-value" id="svt-at-sea">0</p>
+        </div>
+    </div>
+
+    <div class="svt-main-content">
+        <!-- Filters -->
+        <div class="svt-filters-container">
+            <div class="svt-filter-panel">
+                <!-- Vessel List -->
+                <div class="svt-filter-group">
+                    <h2 class="svt-filter-title">VESSEL LIST</h2>
+                    <div class="svt-filter-items" id="svt-vessel-filters">
+                        <!-- Vessel filters will be populated here -->
+                    </div>
+                </div>
+
+                <!-- Charter Type -->
+                <div class="svt-filter-group">
+                    <h2 class="svt-filter-title">CHARTER TYPE</h2>
+                    <div class="svt-filter-items" id="svt-charter-type-filters">
+                        <!-- Charter type filters will be populated here -->
+                    </div>
+                </div>
+
+                <!-- Charterer -->
+                <div class="svt-filter-group">
+                    <h2 class="svt-filter-title">CHARTERER</h2>
+                    <div class="svt-filter-items" id="svt-charterer-filters">
+                        <!-- Charterer filters will be populated here -->
+                    </div>
+                </div>
+
+                <!-- Port filters -->
+                <div class="svt-filter-group">
+                    <h3 class="svt-filter-title">PORTS</h3>
+                    <div class="svt-filter-items" id="svt-port-filters">
+                        <!-- Port filters will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Status filters -->
+                <div class="svt-filter-group">
+                    <h3 class="svt-filter-title">STATUS</h3>
+                    <div class="svt-filter-items" id="svt-status-filters">
+                        <!-- Status filters will be populated by JavaScript -->
+                    </div>
+                </div> 
+            </div>
+        </div>
+
+        <div class="svt-main-content">
+            <div class="svt-table-panel">
+
+                <!-- Tabs -->
+                <div class="svt-tabs">
+                    <h1 class="svt-title">
+                        <a href="{% url 'voy-summary' %}" class="svt-link{% if request.path == '/voy-summary/' %} active{% endif %}">Voyage Summary</a> |
+                        <a href="{% url 'trip-summary' %}" class="svt-link{% if request.path == '/trip-summary/' %} active{% endif %}">Trip Summary</a>
+                    </h1>
+                </div>
+
+                <!-- Voyage Summary Tab -->
+                <div class="svt-tab-content" id="voyage-summary">
+                    <div id="svt-loading-indicator" class="svt-loading">
+                        Loading voyage data...
+                    </div>
+
+                    <!-- Table controls -->
+                    <div class="svt-table-controls">
+                        <div class="svt-items-per-page">
+                            <label>Items per page:</label>
+                            <select id="svt-items-per-page">
+                                <option value="10">10</option>
+                                <option value="25">25</option>
+                                <option value="50">50</option>
+                                <option value="100">100</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Voyage table -->
+                    <div class="svt-table-container">
+                        <table class="svt-voyage-table" id="svt-voyage-table">
+                            <thead>
+                                <tr>
+                                    <th data-sort="vessel">Vessel <span class="svt-sort-indicator">▲</span></th>
+                                    <th data-sort="voyage">Voyage <span class="svt-sort-indicator">▲</span></th>
+                                    <th data-sort="charterType">Charter Type <span class="svt-sort-indicator">▲</span></th>
+                                    <th data-sort="charterer">Charterer <span class="svt-sort-indicator">▲</span></th>
+                                    <th data-sort="loadPort">Load Port <span class="svt-sort-indicator">▲</span></th>
+                                    <th data-sort="destination">Destination <span class="svt-sort-indicator">▲</span></th>
+                                    <th data-sort="startDate">Start Date <span class="svt-sort-indicator">▲</span></th>
+                                    <th data-sort="endDate">End Date <span class="svt-sort-indicator">▲</span></th>
+                                    <th data-sort="status">Status <span class="svt-sort-indicator">▲</span></th>
+                                    <th data-sort="status">FO Cons. (KL) <span class="svt-sort-indicator">▲</span></th>
+                                    <th data-sort="status">DO Cons. (KL) <span class="svt-sort-indicator">▲</span></th>
+                                    <th data-sort="status">Speed (Knots) <span class="svt-sort-indicator">▲</span></th>
+                                    <th data-sort="status">Utilization (%) <span class="svt-sort-indicator">▲</span></th>
+                                    <th>Details</th>
+                                </tr>
+                            </thead>
+                            <tbody id="svt-voyage-table-body">
+                                <!-- Table rows will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pagination controls -->
+                    <div class="svt-pagination" id="svt-pagination">
+                        <div class="svt-pagination-info" id="svt-pagination-info">
+                            Showing 0 to 0 of 0 voyages
+                        </div>
+                        <div class="svt-pagination-controls" id="svt-pagination-controls">
+                            <!-- Pagination buttons will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Trip Summary Tab -->
+                <div class="svt-tab-content" id="trip-summary" style="display:none;">
+                    <p>Trip summary will be implemented here.</p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/voysummary.js' %}"></script>
+<script>
+    // Tab switching
+    document.querySelectorAll('.svt-tab').forEach(tab => {
+        tab.addEventListener('click', function() {
+            // Remove active from all tabs
+            document.querySelectorAll('.svt-tab').forEach(t => t.classList.remove('active'));
+            // Hide all tab contents
+            document.querySelectorAll('.svt-tab-content').forEach(c => c.style.display = 'none');
+
+            // Activate clicked tab
+            this.classList.add('active');
+            document.getElementById(this.dataset.tab).style.display = 'block';
+        });
+    });
+</script>
+{% endblock %}

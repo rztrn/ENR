@@ -1,0 +1,304 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css%}
+    <link rel="stylesheet" href="{% static 'css/voydetailsstyles.css' %}">
+{% endblock %}
+
+{% block title %}Vessel Sea Trial Record{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="header">
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="engine-form" data-api="/api/voyage/details/">Engine Form</button>
+                <button class="tab-btn" data-tab="deck-form" data-api="/api/voyage/details/deck/">Deck Form</button>
+                <button class="tab-btn" data-tab="lo-form" data-api="/api/voyage/lo/">L.O. Form</button>
+            </div>
+        </div>
+
+        <div class="tab-content active" id="engine-form">
+            
+            <div class="table-container">
+                <!-- Fixed columns table -->
+                <div class="fixed-table-container">
+                    <table class="fixed-table">
+                        <thead>
+                            <tr>
+                                <th rowspan="2">No</th>
+                                <th rowspan="2">Activity</th>
+                                <th rowspan="2">Sail No</th>
+                                <th colspan="4">Voyage Details</th>
+                            </tr>
+                            <tr>
+                                <th>Date Time</th>
+                                <th>GMT</th>
+                                <th>Step</th>
+                                <th>Duration<br><span class="small-text">(hh:mm)</span></th>
+                            </tr>
+                        </thead>
+                        <tbody id="fixed-engine-fixed-body">
+                            <!-- Data will be inserted here by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Scrollable columns table -->
+                <div class="scroll-table-container">
+                    <table class="scroll-table">
+                        <thead>
+                            <tr>
+                                <th colspan="2">Location</th>
+                                <th colspan="5">Main Engine Parameters</th>
+                                <th colspan="6">Main Engine (l)</th>
+                                <th colspan="6">Boiler (l)</th>
+                                <th colspan="8">Aux Engine (l) (DO)</th>
+                                <th colspan="12 ">Cargo Compressor (l) (DO)</th>
+                                <th colspan="2 ">E. Gen (l) (DO)</th>
+                                <th colspan="2 ">B. Thruster (l) (DO)</th>
+                                <th colspan="2 ">Other (l)</th>
+                                <th colspan="2 ">Total Cons (kl)</th>
+                                <th colspan="5 ">Fuel oil on board (kl)</th>
+                                <th colspan="5 ">Diesel oil on board (kl)</th>
+                                <th colspan="2 ">Specific Gravity</th>
+                                <th colspan="2 ">Total Cons (mt)</th>
+                                <th colspan="2 ">ROB (mt)</th>
+                            </tr>
+                            <tr>
+                                <!-- Location-->
+                                <th>At/From<br><span class="small-text">(Unlocode)</span></th>
+                                <th>To<br><span class="small-text">(Unlocode)</span></th>
+                                
+                                <!-- Engine Condition -->
+                                <th>RPM</th>
+                                <th>Load<br><span class="small-text">(kw)</span></th>
+                                <th>Prop<br> RPM</th>
+                                <th>Eng Speed<br><span class="small-text">(knots)</span></th>
+                                <th>CPP<br><span class="small-text">(deg)</span></th>
+                                
+                                <!-- Main Engine -->
+                                <th>FM In</th>
+                                <th>FM Out</th>
+                                <th>FO</th>
+                                <th>DO</th>
+                                <th>Check</th>
+                                <th>RH<br><span class="small-text">(hh:mm)</span></th>
+                                
+                                <!-- Boiler -->
+                                <th>FM In</th>
+                                <th>FM Out</th>
+                                <th>FO</th>
+                                <th>DO</th>
+                                <th>Check</th>
+                                <th>RH<br><span class="small-text">(hh:mm)</span></th>
+                                
+                                <!-- Aux. Engine -->
+                                <th>FM In</th>
+                                <th>AE 1</th>
+                                <th>AE 2</th>
+                                <th>AE 3</th>
+                                <th>Check</th>
+                                <th>RH 1<br><span class="small-text">(hh:mm)</span></th>
+                                <th>RH 2<br><span class="small-text">(hh:mm)</span></th>
+                                <th>RH 3<br><span class="small-text">(hh:mm)</span></th>
+
+                                <!-- Cargo Compressors -->
+                                <th>CC 1</th>
+                                <th>CC 2</th>
+                                <th>CC 3</th>
+                                <th>CC 4</th>
+                                <th>CC 5</th>
+                                <th>CC 6</th>
+                                <th>RH 1<br><span class="small-text">(hh:mm)</span></th>
+                                <th>RH 2<br><span class="small-text">(hh:mm)</span></th>
+                                <th>RH 3<br><span class="small-text">(hh:mm)</span></th>
+                                <th>RH 4<br><span class="small-text">(hh:mm)</span></th>
+                                <th>RH 5<br><span class="small-text">(hh:mm)</span></th>
+                                <th>RH 6<br><span class="small-text">(hh:mm)</span></th>
+
+                                <!-- Emergency Generators-->
+                                <th>DO</th>
+                                <th>RH<br><span class="small-text">(hh:mm)</span></th>
+
+                                <!-- Bow Thruster -->
+                                <th>DO</th>
+                                <th>RH<br><span class="small-text">(hh:mm)</span></th>
+
+                                <!-- Other -->
+                                <th>FO</th>
+                                <th>DO</th>
+
+                                <!-- Total Cons -->
+                                <th>FO</th>
+                                <th>DO</th>
+                                
+                                <!-- Fuel Oil On Board -->
+                                <th>ROB</th>
+                                <th>FOTS</th>
+                                <th>Correction</th>
+                                <th>Supply</th>
+                                <th>Supply Type</th>
+
+                                <!-- Diesel Oil On Board -->
+                                <th>ROB</th>
+                                <th>FOTS</th>
+                                <th>Correction</th>
+                                <th>Supply</th>
+                                <th>Supply Type</th>
+
+                                <!-- Specific Gravity -->
+                                <th>FO</th>
+                                <th>DO</th>
+
+                                <!-- Total Cons in MT -->
+                                <th>FO</th>
+                                <th>DO</th>
+
+                                <!-- ROB in MT -->
+                                <th>FO</th>
+                                <th>DO</th>
+                            </tr>
+                        </thead>
+                        <tbody id="scroll-engine-scroll-body">
+                            <!-- Data will be inserted here by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-content" id="deck-form">
+            <div class="table-container">
+                <!-- Fixed columns table -->
+                <div class="fixed-table-container">
+                    <table class="fixed-table">
+                        <thead>
+                            <tr>
+                                <th rowspan="2">No</th>
+                                <th rowspan="2">Activity</th>
+                                <th rowspan="2">Sail No</th>
+                                <th colspan="4">Voyage Details</th>
+                            </tr>
+                            <tr>
+                                <th>Date Time</th>
+                                <th>GMT</th>
+                                <th>Step</th>
+                                <th>Duration<br><span class="small-text">(hh:mm)</span></th>
+                            </tr>
+                        </thead>
+                        <tbody id="fixed-deck-fixed-body">
+                            <!-- Data will be inserted here by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Scrollable columns table -->
+                <div class="scroll-table-container">
+                    <table class="scroll-table">
+                        <thead>
+                            <tr>
+                                <th colspan="2">Location</th>
+                                <th colspan="5">Fresh Water</th>
+                                <th colspan="8">Deadweight</th>
+                                <th colspan="4">Draft</th>
+                                <th colspan="3">Distance</th>
+                                <th colspan="4">Vessel Speed</th>
+                                <th colspan="7">Coordinate</th>
+                                <th colspan="4">Position</th>
+                                <th colspan="4">Wind</th>
+                                <th colspan="4">Wave</th>
+                                <th colspan="1">Remarks</th>
+                            </tr>
+                            <tr>
+                                <!-- Location-->
+                                <th>At/From<br><span class="small-text">(Unlocode)</span></th>
+                                <th>To<br><span class="small-text">(Unlocode)</span></th>
+                                
+                                <!-- Fresh Water -->
+                                <th>ROB<br><span class="small-text">(mt)</span></th>
+                                <th>Supply<br><span class="small-text">(mt)</span></th>
+                                <th>Gen.<br><span class="small-text">(mt)</span></th>
+                                <th>Cons.<br><span class="small-text">Noon (mt)</span></th>
+                                <th>Remarks</th>
+                                
+                                <!-- Deadweight -->
+                                <th>Cargo 1<br>ROB <span class="small-text">(mt)</span></th>
+                                <th>Cargo 1<br>Type</th>
+                                <th>Cargo 2<br>ROB <span class="small-text">(mt)</span></th>
+                                <th>Cargo 2<br>Type</th>
+                                <th>Ballast<br>Water <span class="small-text">(mt)</span></th>
+                                <th>Constant<br><span class="small-text">(mt)</span></th>
+                                <th>Other<br><span class="small-text">(mt)</span></th>
+                                <th>Total<br><span class="small-text">(mt)</span></th>
+                                
+                                <!-- Draft -->
+                                <th>Fore<br><span class="small-text">(m)</span></th>
+                                <th>Mid<br><span class="small-text">(m)</span></th>
+                                <th>Aft<br><span class="small-text">(m)</span></th>
+                                <th>Hogging/<br>Sagging<span class="small-text">(m)</span></th>
+                                
+                                <!-- Distance -->
+                                <th>From Last<br>Port <span class="small-text">(nm)</span></th>
+                                <th>In 24<br>Hours <span class="small-text">(nm)</span></th>
+                                <th>To Go<br><span class="small-text">(nm)</span></th>
+
+                                <!-- Vessel Speed -->
+                                <th>Log Speed<br><span class="small-text">(knots)</span></th>
+                                <th>GPS Speed<br><span class="small-text">(knots)</span></th>
+                                <th>Avg. Speed<br><span class="small-text">(knots)</span></th>
+                                <th>Slip<br><span class="small-text">(%)</span></th>
+
+                                <!-- Coordinate-->
+                                <th>Lat Degree</th>
+                                <th>Lat Decimal</th>
+                                <th>Lat Q</th>
+                                <th>Long Degree</th>
+                                <th>Long Decimal</th>
+                                <th>Long Q</th>
+                                <th>Notes</th>
+
+                                <!-- Position -->
+                                <th>HS</th>
+                                <th>Steering<br>RH</th>
+                                <th>Barometer</th>
+                                <th>Temperature</th>
+
+                                <!-- Wind -->
+                                <th>Direction</th>
+                                <th>True Speed<br><span class="small-text">(m/s)</span></th>
+                                <th>Beaufort<br>Scale</th>
+                                <th>Weather Condition</th>
+
+                                <!-- Wave -->
+                                <th>Sig. Wave<br>Height <span class="small-text">(m)</span> </th>
+                                <th>Douglas<br>Scale</th>
+                                <th>Sea State</th>
+                                <th>Swell Length<br><span class="small-text">(m)</span> </th>
+
+                                <!-- Wave -->
+                                <th>Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody id="scroll-deck-scroll-body">
+                            <!-- Data will be inserted here by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-content" id="lo-form">
+            <div class="form-header">
+                <h2>L.O. Form</h2>
+            </div>
+            <div class="placeholder">
+                <p>L.O. Form content will be displayed here.</p>
+                <p class="small-text">This tab is prepared for future implementation.</p>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/voydetailsapp.js' %}"></script>
+{% endblock %}

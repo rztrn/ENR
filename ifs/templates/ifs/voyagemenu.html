@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css%}
+    <link rel="stylesheet" href="{% static 'css/voymenu.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+{% endblock %}
+
+{% block title %}Vessel Sea Trial Record{% endblock %}
+
+{% block content %}
+<div class="svt-container">
+    <h1 class="svt-app-title">Shipping Voyage Tracker</h1>
+
+    <!-- Scorecards -->
+    <div class="svt-scorecards">
+        <div class="svt-scorecard">
+            <h3 class="svt-scorecard-title">Total Vessels</h3>
+            <p class="svt-scorecard-value" id="svt-total-vessels">0</p>
+        </div>
+        <div class="svt-scorecard">
+            <h3 class="svt-scorecard-title">Active Voyages</h3>
+            <p class="svt-scorecard-value" id="svt-active-voyages">0</p>
+        </div>
+        <div class="svt-scorecard">
+            <h3 class="svt-scorecard-title">At Port</h3>
+            <p class="svt-scorecard-value" id="svt-at-port">0</p>
+        </div>
+        <div class="svt-scorecard">
+            <h3 class="svt-scorecard-title">At Sea</h3>
+            <p class="svt-scorecard-value" id="svt-at-sea">0</p>
+        </div>
+    </div>
+
+    <div class="svt-main-content">
+        <!-- Filters -->
+        <div class="svt-filters-container">
+            <div class="svt-filter-panel">
+                <!-- Vessel List -->
+                <div class="svt-filter-group">
+                    <h2 class="svt-filter-title">VESSEL LIST</h2>
+                    <div class="svt-filter-items" id="svt-vessel-filters">
+                        <!-- Vessel filters will be populated here -->
+                    </div>
+                </div>
+
+                <!-- Charter Type -->
+                <div class="svt-filter-group">
+                    <h2 class="svt-filter-title">CHARTER TYPE</h2>
+                    <div class="svt-filter-items" id="svt-charter-type-filters">
+                        <!-- Charter type filters will be populated here -->
+                    </div>
+                </div>
+
+                <!-- Charterer -->
+                <div class="svt-filter-group">
+                    <h2 class="svt-filter-title">CHARTERER</h2>
+                    <div class="svt-filter-items" id="svt-charterer-filters">
+                        <!-- Charterer filters will be populated here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Voyages -->
+        <div class="svt-voyages-container">
+            <div class="svt-voyages-panel">
+                <div class="svt-voyages-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid #e5e7eb;">
+                    <h2 class="svt-voyages-title" style="margin-bottom: 0;">ONGOING VOYAGES</h2>
+                </div>
+                <div class="svt-voyages-list" id="svt-voyages-list">
+                    <!-- Voyages will be populated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Voyage Details (initially hidden) -->
+    <div class="svt-voyage-details" id="svt-voyage-details">
+        <div class="svt-back-button" id="svt-back-button">
+            ← Back to Dashboard
+        </div>
+        <h1 class="svt-voyage-details-title" id="svt-voyage-details-title">Voyage Details</h1>
+
+        <div class="svt-voyage-details-content">
+            <div class="svt-voyage-info-container">
+                <!-- Voyage Information -->
+                <div class="svt-voyage-info">
+                    <h2 class="svt-section-title">Voyage Information</h2>
+                    <div class="svt-info-grid" id="svt-voyage-info-grid">
+                        <!-- Voyage info will be populated here -->
+                    </div>
+                </div>
+
+                <!-- Route Information -->
+                <div class="svt-route-info">
+                    <h2 class="svt-section-title">Route Information</h2>
+                    <div class="svt-route-list" id="svt-route-list">
+                        <!-- Route info will be populated here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Voyage Progress -->
+            <div class="svt-voyage-progress">
+                <h2 class="svt-section-title">Voyage Progress</h2>
+                <div class="svt-progress-container" id="svt-progress-container">
+                    <!-- Progress will be populated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/voymenu.js' %}"></script>
+{% endblock %}
